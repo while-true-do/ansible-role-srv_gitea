@@ -1,0 +1,11 @@
+---
+# handlers file for while_true_do.srv_gitea
+
+- name: Restart gitea
+  service:
+    name: "gitea"
+    state: "restarted"
+  become: true
+  tags:
+    - gitea
+    - service

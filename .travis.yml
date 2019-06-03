@@ -1,0 +1,61 @@
+---
+# name: .travis.yml
+# description: This file tells travis, what needs to be done.
+# author: while-true-do.io
+# contact: hello@while-true-do.io
+# license: BSD-3-Clause
+# reference: https://docs.travis-ci.com/user/customizing-the-build
+
+language: python
+services:
+  # Provide the docker service.
+  - docker
+
+env:
+  matrix:
+    # Please also maintain
+    # - meta/main.yml
+    # - molecule/defaults/tests/*
+    - name: "centos7"
+      image: "centos:7"
+    - name: "redhat7"
+      image: "centos:7"
+    - name: "fedora29"
+      image: "fedora:29"
+      pygroup: "python3"
+    - name: "fedora30"
+      image: "fedora:30"
+      pygroup: "python3"
+
+install:
+  # Install test dependencies.
+  - pip install ansible==2.7.10 molecule[docker]
+
+before_script:
+  # Use actual Ansible Galaxy role name for the project directory.
+  - ln -s  $PWD ../while_true_do.srv_gitea
+  - cd ../while_true_do.srv_gitea
+
+script:
+  # Do the tests.
+  - molecule test
+
+notifications:
+  email:
+    recipients:
+      - devel@while-true-do.io
+    on_success: change
+    on_failure: always
+
+  irc:
+    channels:
+      - "chat.freenode.net#while-true-do"
+    on_success: change
+    on_failure: always
+
+  webhooks:
+    urls:
+      - https://galaxy.ansible.com/api/v1/notifications/
+    on_success: always
+    on_failure: always
+    on_pull_requests: false

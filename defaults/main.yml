@@ -1,0 +1,54 @@
+---
+# defaults file for while_true_do.srv_gitea
+
+## Package Management
+wtd_srv_gitea_package_mode: "binary"
+# Only needed for wtd_srv_gitea_package_mode = "binary"
+wtd_srv_gitea_package_version: "1.8.2"
+wtd_srv_gitea_package_url: "https://dl.gitea.io/gitea/{{ wtd_srv_gitea_package_version }}/gitea-{{ wtd_srv_gitea_package_version }}-linux-amd64"
+# State can be present|absent
+wtd_srv_gitea_package_state: "present"
+
+## Configuration Management
+wtd_srv_gitea_conf_user:
+  name: "gitea"
+  group: "gitea"
+  home: "/home/gitea"
+
+wtd_srv_gitea_conf_port: "3000"
+wtd_srv_gitea_conf_var: "/var/lib/gitea"
+wtd_srv_gitea_conf_etc: "/etc/gitea"
+
+# Gitea has tons of options. You can get an overview here:
+# https://docs.gitea.io/en-us/config-cheat-sheet/
+# https://github.com/go-gitea/gitea/blob/master/custom/conf/app.ini.sample
+wtd_srv_gitea_conf:
+  - option: "APP_NAME"
+    value: "Gitea - Git with a cup of tea"
+    section: null
+  - option: RUN_MODE
+    value: "dev"
+    section: null
+  - option: "RUN_USER"
+    value: "{{ wtd_srv_gitea_conf_user.name }}"
+    section: null
+  - option: "AUTHOR"
+    value: "Gitea - Git with a cup of tea"
+    section: "ui.meta"
+  - option: "HTTP_PORT"
+    value: "{{ wtd_srv_gitea_conf_port }}"
+    section: "server"
+
+## Service Management
+wtd_srv_gitea_service: "gitea"
+# State can be started|stopped
+wtd_srv_gitea_service_state: "started"
+wtd_srv_gitea_service_enabled: true
+
+## Firewalld Management
+wtd_srv_gitea_fw_mgmt: true
+wtd_srv_gitea_fw_port: "{{ wtd_srv_gitea_conf_port }}/tcp"
+# State can be enabled|disabled
+wtd_srv_gitea_fw_state: "enabled"
+# Zone can be according to defined zones on your machine.
+wtd_srv_gitea_fw_zone: "public"

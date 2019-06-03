@@ -1,0 +1,73 @@
+---
+# tasks file for while_true_do.srv_gitea
+
+- name: Gather package facts
+  package_facts:
+    manager: auto
+  tags:
+    - cockpit
+    - facts
+    - package
+
+- name: Manage gitea Dependencies
+  package:
+    name: "git"
+    state: "present"
+  become: true
+  tags:
+    - git
+    - gitea
+    - package
+
+- name: Include setup Tasks
+  include_tasks: "{{ wtd_srv_gitea_package_mode }}.yml"
+  tags:
+    - gitea
+    - package
+    - system
+    - service
+    - configuration
+
+- name: Manage gitea Configuration
+  ini_file:
+    path: "{{ wtd_srv_gitea_conf_etc }}/app.ini"
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state|default('present') }}"
+    mode: "0660"
+    owner: "root"
+    group: "{{ wtd_srv_gitea_conf_user.group }}"
+  become: true
+  notify: "Restart gitea"
+  loop: "{{ wtd_srv_gitea_conf }}"
+  when:
+    - wtd_srv_gitea_package_state != "absent"
+  tags:
+    - gitea
+    - configuration
+
+- name: Manage gitea Service
+  service:
+    name: "{{ wtd_srv_gitea_service }}"
+    state: "{{ wtd_srv_gitea_service_state }}"
+    enabled: "{{ wtd_srv_gitea_service_enabled }}"
+  become: true
+  when: wtd_srv_gitea_package_state != "absent"
+  tags:
+    - gitea
+    - service
+
+- name: Manage gitea Firewalld Port
+  firewalld:
+    port: "{{ wtd_srv_gitea_fw_port }}"
+    state: "{{ wtd_srv_gitea_fw_state }}"
+    zone: "{{ wtd_srv_gitea_fw_zone }}"
+  become: true
+  when:
+    - wtd_srv_gitea_fw_mgmt
+    - '"firewalld" in packages'
+  tags:
+    - gitea
+    - firewall
+    - security

@@ -1,0 +1,112 @@
+---
+# tasks file for while_true_do.srv_gitea
+
+- name: Manage gitea Group
+  group:
+    name: "{{ wtd_srv_gitea_conf_user.group }}"
+    state: "present"
+  become: true
+  tags:
+    - gitea
+    - configuration
+    - group
+
+- name: Manage gitea User
+  user:
+    name: "{{ wtd_srv_gitea_conf_user.name }}"
+    group: "{{ wtd_srv_gitea_conf_user.group }}"
+    home: "{{ wtd_srv_gitea_conf_user.home }}"
+    state: "present"
+    system: true
+    password_lock: true
+  become: true
+  tags:
+    - gitea
+    - configuration
+    - user
+
+- name: Manage gitea systemd service file
+  template:
+    src: "gitea.service.j2"
+    dest: "/etc/systemd/system/gitea.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  become: true
+  tags:
+    - gitea
+    - configuration
+    - system
+    - service
+
+- name: Reload Systemd
+  systemd:
+    daemon_reload: yes
+  become: true
+  tags:
+    - gitea
+    - service
+
+- name: Install gitea Binary
+  get_url:
+    url: "{{ wtd_srv_gitea_package_url }}"
+    dest: "/usr/local/bin/gitea"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  become: true
+  notify:
+    - Restart gitea
+  when:
+    - wtd_srv_gitea_package_state != "absent"
+  tags:
+    - gitea
+    - package
+
+- name: Remove gitea Binary
+  file:
+    path: "/usr/local/bin/gitea"
+    state: "absent"
+  become: true
+  when:
+    - wtd_srv_gitea_package_state == "absent"
+  tags:
+    - gitea
+    - package
+
+- name: Manage gitea var
+  file:
+    path: "{{ wtd_srv_gitea_conf_var }}"
+    state: "directory"
+    owner: "{{ wtd_srv_gitea_conf_user.name }}"
+    group: "{{ wtd_srv_gitea_conf_user.group }}"
+  become: true
+  tags:
+    - gitea
+    - configuration
+
+- name: Manage gitea var/*
+  file:
+    path: "{{ wtd_srv_gitea_conf_var }}/{{ item }}"
+    state: "directory"
+    owner: "{{ wtd_srv_gitea_conf_user.name }}"
+    group: "{{ wtd_srv_gitea_conf_user.group }}"
+  become: true
+  loop:
+    - custom
+    - data
+    - log
+  tags:
+    - gitea
+    - configuration
+
+- name: Manage gitea etc
+  file:
+    path: "{{ wtd_srv_gitea_conf_etc }}"
+    state: "directory"
+    owner: "root"
+    group: "{{ wtd_srv_gitea_conf_user.group }}"
+  become: true
+  tags:
+    - gitea
+    - configuration

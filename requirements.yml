@@ -1,0 +1,8 @@
+---
+# name: requirements.yml
+# description: This file contains dependencies.
+# author: while-true-do.io
+# contact: hello@while-true-do.io
+# license: BSD-3-Clause
+
+- src: while_true_do.app_git
