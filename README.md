@@ -87,7 +87,7 @@ ansible-galaxy install -r requirements.yml
 ## Package Management
 wtd_srv_gitea_package_mode: "binary"
 # Only needed for wtd_srv_gitea_package_mode = "binary"
-wtd_srv_gitea_package_version: "1.8.2"
+wtd_srv_gitea_package_version: "1.9.2"
 wtd_srv_gitea_package_url: "https://dl.gitea.io/gitea/{{ wtd_srv_gitea_package_version }}/gitea-{{ wtd_srv_gitea_package_version }}-linux-amd64"
 # State can be present|absent
 wtd_srv_gitea_package_state: "present"
@@ -101,7 +101,6 @@ wtd_srv_gitea_conf_user:
 wtd_srv_gitea_conf_port: "3000"
 wtd_srv_gitea_conf_var: "/var/lib/gitea"
 wtd_srv_gitea_conf_etc: "/etc/gitea"
-# https://docs.gitea.io/en-us/config-cheat-sheet/
 
 # Gitea has tons of options. You can get an overview here:
 # https://docs.gitea.io/en-us/config-cheat-sheet/
@@ -111,7 +110,7 @@ wtd_srv_gitea_conf:
     value: "Gitea - Git with a cup of tea"
     section: null
   - option: RUN_MODE
-    value: "dev"
+    value: "prod"
     section: null
   - option: "RUN_USER"
     value: "{{ wtd_srv_gitea_conf_user.name }}"
@@ -122,6 +121,15 @@ wtd_srv_gitea_conf:
   - option: "HTTP_PORT"
     value: "{{ wtd_srv_gitea_conf_port }}"
     section: "server"
+  - option: "HTTP_ADDR"
+    value: "0.0.0.0"
+    section: "server"
+  - option: "DOMAIN"
+    value: "localhost"
+    section: "server"
+  - option: "ROOT"
+    value: "{{ wtd_srv_gitea_conf_user.home }}/gitea-repositories"
+    section: "repository"
 
 ## Service Management
 wtd_srv_gitea_service: "gitea"

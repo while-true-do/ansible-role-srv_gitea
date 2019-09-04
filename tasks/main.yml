@@ -5,7 +5,9 @@
   package_facts:
     manager: auto
   tags:
-    - cockpit
+    - gitea
+    - firewall
+    - security
     - facts
     - package
 
@@ -19,7 +21,7 @@
     - gitea
     - package
 
-- name: Include setup Tasks
+- name: Include gitea Setup Tasks
   include_tasks: "{{ wtd_srv_gitea_package_mode }}.yml"
   tags:
     - gitea
@@ -53,7 +55,8 @@
     state: "{{ wtd_srv_gitea_service_state }}"
     enabled: "{{ wtd_srv_gitea_service_enabled }}"
   become: true
-  when: wtd_srv_gitea_package_state != "absent"
+  when:
+    - wtd_srv_gitea_package_state != "absent"
   tags:
     - gitea
     - service
@@ -63,6 +66,8 @@
     port: "{{ wtd_srv_gitea_fw_port }}"
     state: "{{ wtd_srv_gitea_fw_state }}"
     zone: "{{ wtd_srv_gitea_fw_zone }}"
+    immediate: true
+    permanent: true
   become: true
   when:
     - wtd_srv_gitea_fw_mgmt
