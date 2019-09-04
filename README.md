@@ -87,7 +87,7 @@ ansible-galaxy install -r requirements.yml
 ## Package Management
 wtd_srv_gitea_package_mode: "binary"
 # Only needed for wtd_srv_gitea_package_mode = "binary"
-wtd_srv_gitea_package_version: "1.8.2"
+wtd_srv_gitea_package_version: "1.9.2"
 wtd_srv_gitea_package_url: "https://dl.gitea.io/gitea/{{ wtd_srv_gitea_package_version }}/gitea-{{ wtd_srv_gitea_package_version }}-linux-amd64"
 # State can be present|absent
 wtd_srv_gitea_package_state: "present"
