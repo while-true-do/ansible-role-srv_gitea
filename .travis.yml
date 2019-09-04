@@ -18,8 +18,6 @@ env:
     # - molecule/defaults/tests/*
     - name: "centos7"
       image: "centos:7"
-    - name: "redhat7"
-      image: "centos:7"
     - name: "fedora29"
       image: "fedora:29"
       pygroup: "python3"
@@ -29,7 +27,7 @@ env:
 
 install:
   # Install test dependencies.
-  - pip install ansible==2.7.10 molecule[docker]
+  - pip install ansible molecule[docker]
 
 before_script:
   # Use actual Ansible Galaxy role name for the project directory.
